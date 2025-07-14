@@ -1,0 +1,46 @@
+{
+    "name": "c3-connect-groups",
+    "version": "1.0.0",
+    "description": "C3 Toronto Connect Groups discovery platform",
+    "scripts": {
+        "dev": "next dev --turbopack",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "type-check": "tsc --noEmit"
+    },
+    "keywords": [
+        "next.js",
+        "react",
+        "typescript",
+        "tailwind",
+        "church",
+        "community"
+    ],
+    "author": "C3 Toronto",
+    "license": "MIT",
+    "dependencies": {
+        "@googlemaps/js-api-loader": "^1.16.10",
+        "@radix-ui/react-dialog": "^1.1.14",
+        "@radix-ui/react-dropdown-menu": "^2.1.15",
+        "@radix-ui/react-select": "^2.2.5",
+        "@tailwindcss/postcss": "^4.1.11",
+        "@types/google.maps": "^3.58.1",
+        "@types/node": "^24.0.13",
+        "@types/react": "^19.1.8",
+        "@types/react-dom": "^19.1.6",
+        "autoprefixer": "^10.4.21",
+        "axios": "^1.10.0",
+        "eslint": "^9.31.0",
+        "eslint-config-next": "^15.3.5",
+        "lucide-react": "^0.525.0",
+        "next": "^15.3.5",
+        "postcss": "^8.5.6",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+        "react-hook-form": "^7.60.0",
+        "tailwindcss": "^4.1.11",
+        "typescript": "^5.8.3",
+        "zustand": "^5.0.6"
+    }
+}

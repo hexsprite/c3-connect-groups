@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* C3 Brand CSS Variables and Global Styles */
+:root {
+  --c3-primary-blue: #006acc;
+  --c3-selection-blue: #0073e6;
+  --c3-button-hover: #0084ff;
+  --c3-text-primary: #292929;
+  --c3-text-secondary: #404040;
+  --c3-border: #e5e5e5;
+  --c3-background: #ffffff;
+  --c3-warning-orange: #ffbc86;
+  
+  /* Spacing variables */
+  --c3-xs: 8px;
+  --c3-s: 12px;
+  --c3-m: 16px;
+  --c3-l: 20px;
+  --c3-xl: 24px;
+  --c3-xxl: 32px;
+  --c3-xxxl: 48px;
+}
+
+/* Global body styles matching C3 Webflow implementation */
+body {
+  font-family: Inter, -apple-system, "system-ui", "Segoe UI", Roboto, 
+               Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", 
+               Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--c3-text-primary);
+  background-color: var(--c3-background);
+}
+
+/* Selection color consistent with Webflow */
+::selection {
+  background-color: var(--c3-selection-blue);
+  color: white;
+}
+
+/* Box sizing reset */
+* {
+  box-sizing: border-box;
+}
+
+/* Custom component styles */
+@layer components {
+  .c3-button-primary {
+    background-color: var(--c3-primary-blue);
+    color: white;
+    padding: var(--c3-s) var(--c3-l);
+    border-radius: 3px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .c3-button-primary:hover {
+    background-color: var(--c3-button-hover);
+  }
+  
+  .c3-input {
+    border: 1px solid var(--c3-border);
+    border-radius: 3px;
+    padding: var(--c3-s);
+  }
+  
+  .c3-input:focus {
+    border-color: var(--c3-selection-blue);
+    outline: none;
+  }
+  
+  .c3-card {
+    background-color: white;
+    border: 1px solid var(--c3-border);
+    border-radius: 3px;
+    padding: var(--c3-l);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+  }
+  
+  .c3-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
