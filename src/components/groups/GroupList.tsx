@@ -3,27 +3,29 @@
 import { useEffect, useMemo } from 'react';
 import { useGroupStore } from '@/store/useGroupStore';
 import { mockGroups } from '@/lib/mockData';
+import { groupSearchService } from '@/lib/search';
 import GroupCard from './GroupCard';
 
 export default function GroupList() {
-  const { groups, filters, setGroups } = useGroupStore();
+  const { groups, filters, map, setGroups } = useGroupStore();
 
-  // Load mock data on component mount
+  // Load mock data and initialize search index on component mount
   useEffect(() => {
     setGroups(mockGroups);
+    // Index groups for FlexSearch
+    groupSearchService.indexGroups(mockGroups);
   }, [setGroups]);
 
-  // Filter groups based on current filters
+  // Filter groups based on current filters and map bounds
   const filteredGroups = useMemo(() => {
-    return groups.filter((group) => {
-      // Search filter
-      if (filters.search) {
-        const searchTerm = filters.search.toLowerCase();
-        const matchesSearch = 
-          group.name.toLowerCase().includes(searchTerm) ||
-          group.description.toLowerCase().includes(searchTerm);
-        if (!matchesSearch) return false;
-      }
+    // Start with search-filtered groups using FlexSearch
+    let searchFilteredGroups = groups;
+    if (filters.search) {
+      searchFilteredGroups = groupSearchService.search(filters.search);
+    }
+
+    // Apply other filters to search results
+    return searchFilteredGroups.filter((group) => {
 
       // Location filter
       if (filters.location && !filters.location.includes('All')) {
@@ -45,9 +47,17 @@ export default function GroupList() {
         if (group.groupType !== filters.type) return false;
       }
 
+      // Map bounds filter - only show groups visible on the map
+      if (map.bounds && group.latitude && group.longitude) {
+        const groupPosition = new google.maps.LatLng(group.latitude, group.longitude);
+        if (!map.bounds.contains(groupPosition)) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [groups, filters]);
+  }, [groups, filters, map.bounds]);
 
   if (groups.length === 0) {
     return (

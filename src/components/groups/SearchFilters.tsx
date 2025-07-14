@@ -3,23 +3,23 @@
 import { Search, X, ChevronLeft } from 'lucide-react';
 import { useGroupStore } from '@/store/useGroupStore';
 import { filterOptions } from '@/lib/mockData';
+import { groupSearchService } from '@/lib/search';
 import Select from '@/components/ui/Select';
 import { useMemo } from 'react';
 
 export default function SearchFilters() {
-  const { filters, updateFilters, clearFilters, groups } = useGroupStore();
+  const { filters, updateFilters, clearFilters, groups, map } = useGroupStore();
   
-  // Calculate filtered count
+  // Calculate filtered count (including map bounds and FlexSearch)
   const filteredCount = useMemo(() => {
-    return groups.filter((group) => {
-      // Search filter
-      if (filters.search) {
-        const searchTerm = filters.search.toLowerCase();
-        const matchesSearch = 
-          group.name.toLowerCase().includes(searchTerm) ||
-          group.description.toLowerCase().includes(searchTerm);
-        if (!matchesSearch) return false;
-      }
+    // Start with search-filtered groups using FlexSearch
+    let searchFilteredGroups = groups;
+    if (filters.search) {
+      searchFilteredGroups = groupSearchService.search(filters.search);
+    }
+
+    // Apply other filters to search results
+    return searchFilteredGroups.filter((group) => {
 
       // Location filter
       if (filters.location && !filters.location.includes('All')) {
@@ -41,9 +41,17 @@ export default function SearchFilters() {
         if (group.groupType !== filters.type) return false;
       }
 
+      // Map bounds filter - only count groups visible on the map
+      if (map.bounds && group.latitude && group.longitude) {
+        const groupPosition = new google.maps.LatLng(group.latitude, group.longitude);
+        if (!map.bounds.contains(groupPosition)) {
+          return false;
+        }
+      }
+
       return true;
     }).length;
-  }, [groups, filters]);
+  }, [groups, filters, map.bounds]);
 
   const activeFilters = Object.entries(filters).filter(([key, value]) => {
     if (key === 'search') return value.length > 0;
@@ -67,19 +75,19 @@ export default function SearchFilters() {
   return (
     <div className="bg-white border-b" style={{ borderColor: 'var(--c3-border)' }}>
       {/* Search and Filter Row */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-2">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+          <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" 
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" 
                      style={{ color: 'var(--c3-text-secondary)' }} />
               <input
                 type="text"
                 placeholder="Search for groups..."
                 value={filters.search}
                 onChange={handleSearchChange}
-                className="c3-input pl-10 w-full h-12"
+                className="c3-input pl-9 w-full h-10 text-sm"
                 style={{ 
                   backgroundColor: 'white',
                   borderColor: 'var(--c3-border)',
@@ -89,7 +97,7 @@ export default function SearchFilters() {
             </div>
 
             {/* Filter Dropdowns */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
               <Select
                 value={filters.location}
                 onValueChange={(value) => updateFilters({ location: value })}
@@ -124,9 +132,9 @@ export default function SearchFilters() {
 
       {/* Active Filters Row */}
       {activeFilters.length > 0 && (
-        <div className="px-6 py-3 border-t" style={{ borderColor: 'var(--c3-border)' }}>
+        <div className="px-6 py-2 border-t" style={{ borderColor: 'var(--c3-border)' }}>
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               <div className="flex items-center gap-1" style={{ color: 'var(--c3-text-secondary)' }}>
                 <ChevronLeft className="w-4 h-4" />
                 <span className="text-sm font-medium">Filters</span>

@@ -52,7 +52,11 @@ Based on the requirements for flexibility and Planning Center integration depth,
 
 #### 1. Group Discovery
 - **Browse All Groups**: Paginated list of all active connect groups. This is the default when the page is opened.
-- **Search Functionality**: Search by name, description, or tags
+- **Search Functionality**: Advanced full-text search powered by FlexSearch
+  - Search across multiple fields: group name, description, location, meeting day, group type
+  - Fuzzy matching for typos and partial matches
+  - Relevance-based ranking of results
+  - Fast performance with indexed search
 - **Filtering Options**:
   - Meeting day of week
   - Meeting time (morning, afternoon, evening)
@@ -61,6 +65,19 @@ Based on the requirements for flexibility and Planning Center integration depth,
 - **Map View**: Browse connect groups on a map that are near me
   - Fetch user location using Geolocation API
   - Fetch nearby groups using Google Maps API
+  - **Dynamic Map Filtering**: As users pan and zoom the map, automatically filter the groups list to show only groups visible in the current map bounds
+    - Real-time synchronization between map view and results list
+    - Smooth UX with no manual refresh required
+    - Maintains other active filters (search, day, time, type) while applying map bounds filter
+  - **Map Interaction Behavior**: 
+    - Click on any group marker to view details in an info window
+    - Only one info window open at a time - clicking a new marker closes any previously opened info window
+    - Info windows display group name, description, meeting details, and link to Planning Center
+    - Map does not automatically center/pan when clicking on markers - maintains current view position
+    - **Info Window Dismissal**:
+      - Click outside the info window to close it
+      - Press Escape key to close the currently open info window
+      - Click the X button to close the info window
 
 - The Preview Card for a group should include:
   - Group photos/media
@@ -75,6 +92,7 @@ NOTE: Implementation of the connect group details page is out of scope for this 
 #### As a Church Member
 - I want to easily find groups that match my interests and schedule
 - I want to browse connect groups on a map that are near me
+- I want to see only the groups that are visible on the map when I move around, so I can focus on groups in specific areas without scrolling through irrelevant results
 
 ## Technical Architecture
 
@@ -96,6 +114,7 @@ NOTE: Implementation of the connect group details page is out of scope for this 
 - **Frontend Framework**: Next.js 14+ with App Router
 - **UI Components**: Tailwind CSS + Shadcn/ui
 - **State Management**: React Context / Zustand
+- **Search Engine**: FlexSearch for full-text search
 - **API Integration**: Planning Center API v2
 - **Authentication**: Planning Center OAuth
 - **Hosting**: Vercel or similar JAMstack platform

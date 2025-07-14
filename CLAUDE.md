@@ -124,7 +124,7 @@ Uses Zustand with actions for:
 
 ### Responsive Design
 - Desktop: 60/40 split (cards/map)
-- Tablet: 70/30 split with smaller cards  
+- Tablet: 70/30 split with smaller cards
 - Mobile: Stacked layout with collapsible filters
 
 ## Important Files
@@ -143,3 +143,7 @@ Always verify:
 3. Responsive design across breakpoints
 4. Accessibility standards (keyboard navigation, screen readers)
 5. Google Maps API integration functionality
+
+
+When adding new features or changing existing ones, make sure to keep the PRD.md up to date.
+

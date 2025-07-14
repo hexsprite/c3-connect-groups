@@ -18,7 +18,7 @@ export default function Select({ value, onValueChange, options, placeholder, cla
     <div className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="c3-input flex items-center justify-between w-full min-w-[150px] h-12"
+        className="c3-input flex items-center justify-between w-full min-w-[140px] h-10 text-sm"
         style={{ 
           backgroundColor: 'white',
           borderColor: 'var(--c3-border)',
@@ -50,7 +50,7 @@ export default function Select({ value, onValueChange, options, placeholder, cla
                   onValueChange(option);
                   setIsOpen(false);
                 }}
-                className="w-full px-3 py-2 text-left hover:bg-gray-50 transition-colors"
+                className="w-full px-3 py-1.5 text-left hover:bg-gray-50 transition-colors text-sm"
                 style={{ 
                   color: value === option ? 'var(--c3-primary-blue)' : 'var(--c3-text-secondary)' 
                 }}
