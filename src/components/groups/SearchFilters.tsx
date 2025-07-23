@@ -37,8 +37,10 @@ export default function SearchFilters() {
       }
 
       // Type filter
-      if (filters.type && filters.type !== 'Mixed') {
-        if (group.groupType !== filters.type) return false;
+      if (filters.type && !filters.type.includes('Mixed')) {
+        // Extract the actual type from the dropdown value (e.g., "♂ Men" -> "Men")
+        const actualType = filters.type.split(' ').slice(1).join(' ');
+        if (group.groupType !== actualType) return false;
       }
 
       // Map bounds filter - only count groups visible on the map
@@ -67,7 +69,7 @@ export default function SearchFilters() {
       location: 'All Locations',
       day: 'Any Day',
       time: 'Any Time',
-      type: 'Mixed'
+      type: '⚥ Mixed'
     };
     updateFilters({ [key]: defaultValues[key] || '' });
   };

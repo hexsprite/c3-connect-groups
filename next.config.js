@@ -10,6 +10,12 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'groups-production.s3.amazonaws.com',
+        port: '',
+        pathname: '/**',
       }
     ]
   },

@@ -1,7 +1,8 @@
 "use client";
 
-import { MapPin, Clock, Users, ExternalLink } from "lucide-react";
+import { MapPin, Clock, ExternalLink } from "lucide-react";
 import { Group } from "@/types";
+import { useGroupStore } from "@/store/useGroupStore";
 import Image from "next/image";
 
 interface GroupCardProps {
@@ -9,6 +10,8 @@ interface GroupCardProps {
 }
 
 export default function GroupCard({ group }: GroupCardProps) {
+    const { ui, updateUIState } = useGroupStore();
+    const isHovered = ui.hoveredGroup === group.id;
     const timeMapping: Record<string, string> = {
         Morning: "9:00 AM",
         Afternoon: "2:00 PM",
@@ -17,8 +20,20 @@ export default function GroupCard({ group }: GroupCardProps) {
 
     const displayTime = timeMapping[group.meetingTime] || group.meetingTime;
 
+    const handleMouseEnter = () => {
+        updateUIState({ hoveredGroup: group.id });
+    };
+
+    const handleMouseLeave = () => {
+        updateUIState({ hoveredGroup: null });
+    };
+
     return (
-        <div className="c3-card">
+        <div 
+            className={`c3-card transition-all duration-200 ${isHovered ? 'scale-105 shadow-xl' : ''}`}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
             {/* Group Image */}
             <div className="relative w-full h-48 mb-4 rounded-sm overflow-hidden">
                 <Image
@@ -46,7 +61,7 @@ export default function GroupCard({ group }: GroupCardProps) {
                 </h3>
 
                 <p
-                    className="text-sm line-clamp-2"
+                    className="text-sm"
                     style={{ color: "var(--c3-text-secondary)" }}
                 >
                     {group.description}
@@ -62,19 +77,21 @@ export default function GroupCard({ group }: GroupCardProps) {
                         <span>{group.location}</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        <span>
-                            {group.meetingDay}s, {displayTime}
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4" />
-                        <span>
-                            {group.groupType} • {group.currentMemberCount}/
-                            {group.capacity} members
-                        </span>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            <span>
+                                {group.meetingDay === 'TBD' ? 'TBD' : `${group.meetingDay}s`}, {displayTime}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            {group.groupType === 'Men' && <span className="text-sm">♂</span>}
+                            {group.groupType === 'Women' && <span className="text-sm">♀</span>}
+                            {group.groupType === 'Mixed' && <span className="text-sm">⚥</span>}
+                            <span className="text-xs font-medium" style={{ color: "var(--c3-text-secondary)" }}>
+                                {group.groupType}
+                            </span>
+                        </div>
                     </div>
                 </div>
 

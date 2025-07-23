@@ -6,7 +6,7 @@ const defaultFilters: GroupFilters = {
   location: 'All Locations',
   day: 'Any Day',
   time: 'Any Time',
-  type: 'Mixed'
+  type: '⚥ Mixed'
 };
 
 const defaultMapState: MapState = {
@@ -17,7 +17,8 @@ const defaultMapState: MapState = {
 const defaultUIState: UIState = {
   loading: false,
   view: 'split',
-  selectedGroup: null
+  selectedGroup: null,
+  hoveredGroup: null
 };
 
 export const useGroupStore = create<AppState>((set) => ({

@@ -143,5 +143,5 @@ export const filterOptions = {
   locations: ['All Locations', 'Downtown', 'Midtown', 'Hamilton'],
   days: ['Any Day', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   times: ['Any Time', 'Morning', 'Afternoon', 'Evening'],
-  types: ['Mixed', 'Men', 'Women']
+  types: ['⚥ Mixed', '♂ Men', '♀ Women']
 };

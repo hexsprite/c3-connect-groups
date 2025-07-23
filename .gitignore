@@ -40,3 +40,9 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# Raw data files (for inspection only, not to be committed)
+groups_raw.json
+
+# Generated cache files
+public/groups.json

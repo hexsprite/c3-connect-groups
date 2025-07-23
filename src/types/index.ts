@@ -41,6 +41,7 @@ export interface UIState {
   loading: boolean;
   view: 'split' | 'list' | 'map';
   selectedGroup: string | null;
+  hoveredGroup: string | null;
 }
 
 // Store Types

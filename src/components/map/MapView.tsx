@@ -10,7 +10,7 @@ import LoadingOverlay from "@/components/ui/LoadingOverlay";
 export default function MapView() {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
-    const markersRef = useRef<google.maps.Marker[]>([]);
+    const markersRef = useRef<Map<string, google.maps.Marker>>(new Map());
     const userLocationMarkerRef = useRef<google.maps.Marker | null>(null);
     const radiusCircleRef = useRef<google.maps.Circle | null>(null);
     const currentInfoWindowRef = useRef<google.maps.InfoWindow | null>(null);
@@ -26,7 +26,7 @@ export default function MapView() {
         "granted" | "denied" | "prompt" | null
     >(null);
 
-    const { groups, filters, map: mapState, updateMapState } = useGroupStore();
+    const { groups, filters, map: mapState, ui, updateMapState } = useGroupStore();
 
     // Get user's current location
     const getUserLocation = () => {
@@ -88,8 +88,10 @@ export default function MapView() {
             }
 
             // Type filter
-            if (filters.type && filters.type !== "Mixed") {
-                if (group.groupType !== filters.type) return false;
+            if (filters.type && !filters.type.includes("Mixed")) {
+                // Extract the actual type from the dropdown value (e.g., "♂ Men" -> "Men")
+                const actualType = filters.type.split(" ").slice(1).join(" ");
+                if (group.groupType !== actualType) return false;
             }
 
             return true;
@@ -242,82 +244,162 @@ export default function MapView() {
     useEffect(() => {
         if (!isMapLoaded || !mapInstanceRef.current) return;
 
-        // Clear existing markers
-        markersRef.current.forEach((marker) => marker.setMap(null));
-        markersRef.current = [];
-
-        // Add markers for filtered groups
-        filteredGroups.forEach((group: Group) => {
-            if (group.latitude && group.longitude) {
-                const marker = new google.maps.Marker({
-                    position: { lat: group.latitude, lng: group.longitude },
-                    map: mapInstanceRef.current,
-                    title: group.name,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 8,
-                        fillColor: "#006acc", // C3 primary blue
-                        fillOpacity: 1,
-                        strokeColor: "#ffffff",
-                        strokeWeight: 2,
-                    },
-                });
-
-                // Add info window
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `
-            <div style="padding: 8px; max-width: 200px;">
-              <h3 style="margin: 0 0 8px 0; color: var(--c3-text-primary); font-size: 16px; font-weight: 600;">
-                ${group.name}
-              </h3>
-              <p style="margin: 0 0 8px 0; color: var(--c3-text-secondary); font-size: 14px; line-height: 1.4;">
-                ${group.description.substring(0, 100)}${group.description.length > 100 ? "..." : ""}
-              </p>
-              <div style="margin: 8px 0; color: var(--c3-text-secondary); font-size: 12px;">
-                <div style="margin: 2px 0;">📍 ${group.location}</div>
-                <div style="margin: 2px 0;">🕒 ${group.meetingDay}s, ${group.meetingTime}</div>
-                <div style="margin: 2px 0;">👥 ${group.groupType} • ${group.currentMemberCount}/${group.capacity} members</div>
-              </div>
-              <a href="${group.planningCenterUrl}" target="_blank"
-                 style="display: inline-block; background-color: var(--c3-primary-blue); color: white;
-                        text-decoration: none; padding: 6px 12px; border-radius: 3px; font-size: 12px;
-                        margin-top: 8px;">
-                Learn More →
-              </a>
-            </div>
-          `,
-                });
-
-                marker.addListener("click", () => {
-                    // Close any currently open info window
-                    if (currentInfoWindowRef.current) {
-                        currentInfoWindowRef.current.close();
-                    }
-
-                    // Open the new info window and track it
-                    infoWindow.open(mapInstanceRef.current, marker);
-                    currentInfoWindowRef.current = infoWindow;
-                });
-
-                // Clear reference when info window is closed
-                infoWindow.addListener("closeclick", () => {
-                    currentInfoWindowRef.current = null;
-                });
-
-                markersRef.current.push(marker);
+        // Get current group IDs
+        const currentGroupIds = new Set(filteredGroups.filter(g => g.latitude && g.longitude).map(g => g.id));
+        
+        // Remove markers for groups that are no longer visible
+        markersRef.current.forEach((marker, groupId) => {
+            if (!currentGroupIds.has(groupId)) {
+                marker.setMap(null);
+                markersRef.current.delete(groupId);
             }
         });
 
-        // Adjust map bounds to show all markers if there are any
-        if (markersRef.current.length > 0) {
+        // Add or update markers for filtered groups
+        filteredGroups.forEach((group: Group) => {
+            if (group.latitude && group.longitude) {
+                const isHovered = ui.hoveredGroup === group.id;
+                const existingMarker = markersRef.current.get(group.id);
+                
+                if (existingMarker) {
+                    // Update existing marker icon
+                    existingMarker.setIcon({
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: isHovered ? 12 : 8,
+                        fillColor: isHovered ? "#ff6b35" : "#006acc", // Orange when hovered, C3 blue otherwise
+                        fillOpacity: 1,
+                        strokeColor: "#ffffff",
+                        strokeWeight: isHovered ? 3 : 2,
+                    });
+                } else {
+                    // Create new marker
+                    const marker = new google.maps.Marker({
+                        position: { lat: group.latitude, lng: group.longitude },
+                        map: mapInstanceRef.current,
+                        title: group.name,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: isHovered ? 12 : 8,
+                            fillColor: isHovered ? "#ff6b35" : "#006acc", // Orange when hovered, C3 blue otherwise
+                            fillOpacity: 1,
+                            strokeColor: "#ffffff",
+                            strokeWeight: isHovered ? 3 : 2,
+                        },
+                    });
+
+                    // Add info window
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `
+                <div style="padding: 8px; max-width: 200px;">
+                  <h3 style="margin: 0 0 8px 0; color: var(--c3-text-primary); font-size: 16px; font-weight: 600;">
+                    ${group.name}
+                  </h3>
+                  <p style="margin: 0 0 8px 0; color: var(--c3-text-secondary); font-size: 14px; line-height: 1.4;">
+                    ${group.description.substring(0, 100)}${group.description.length > 100 ? "..." : ""}
+                  </p>
+                  <div style="margin: 8px 0; color: var(--c3-text-secondary); font-size: 12px;">
+                    <div style="margin: 2px 0;">📍 ${group.location}</div>
+                    <div style="margin: 2px 0;">🕒 ${group.meetingDay}s, ${group.meetingTime}</div>
+                    <div style="margin: 2px 0;">
+                      ${group.groupType === 'Men' ? '♂' : group.groupType === 'Women' ? '♀' : '⚥'} ${group.groupType}
+                    </div>
+                  </div>
+                  <a href="${group.planningCenterUrl}" target="_blank"
+                     style="display: inline-block; background-color: var(--c3-primary-blue); color: white;
+                            text-decoration: none; padding: 6px 12px; border-radius: 3px; font-size: 12px;
+                            margin-top: 8px;">
+                    Learn More →
+                  </a>
+                </div>
+              `,
+                    });
+
+                    marker.addListener("click", () => {
+                        // Close any currently open info window
+                        if (currentInfoWindowRef.current) {
+                            currentInfoWindowRef.current.close();
+                        }
+
+                        // Open the new info window and track it
+                        infoWindow.open(mapInstanceRef.current, marker);
+                        currentInfoWindowRef.current = infoWindow;
+                    });
+
+                    // Clear reference when info window is closed
+                    infoWindow.addListener("closeclick", () => {
+                        currentInfoWindowRef.current = null;
+                    });
+
+                    markersRef.current.set(group.id, marker);
+                }
+            }
+        });
+
+        // Adjust map bounds to show all markers if there are any (only on initial load)
+        if (markersRef.current.size > 0 && filteredGroups.length > 0) {
             const bounds = new google.maps.LatLngBounds();
             markersRef.current.forEach((marker) => {
                 const position = marker.getPosition();
                 if (position) bounds.extend(position);
             });
-            mapInstanceRef.current.fitBounds(bounds);
+            // Only fit bounds if this is the first time we're adding markers
+            if (markersRef.current.size === filteredGroups.filter(g => g.latitude && g.longitude).length) {
+                mapInstanceRef.current.fitBounds(bounds);
+            }
         }
-    }, [filteredGroups, isMapLoaded]);
+    }, [filteredGroups, isMapLoaded, ui.hoveredGroup]);
+
+    // Handle hover state changes separately
+    useEffect(() => {
+        if (!isMapLoaded || !mapInstanceRef.current || !ui.hoveredGroup) return;
+
+        // Only update the hovered marker
+        const hoveredMarker = markersRef.current.get(ui.hoveredGroup);
+        if (hoveredMarker) {
+            hoveredMarker.setIcon({
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 14,
+                fillColor: "#ff6b35",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 3,
+            });
+            hoveredMarker.setZIndex(1000);
+        }
+
+        // Reset all other markers
+        markersRef.current.forEach((marker, groupId) => {
+            if (groupId !== ui.hoveredGroup) {
+                marker.setIcon({
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 8,
+                    fillColor: "#006acc",
+                    fillOpacity: 1,
+                    strokeColor: "#ffffff",
+                    strokeWeight: 2,
+                });
+                marker.setZIndex(1);
+            }
+        });
+    }, [ui.hoveredGroup, isMapLoaded]);
+
+    // Handle hover state reset
+    useEffect(() => {
+        if (!isMapLoaded || !mapInstanceRef.current || ui.hoveredGroup) return;
+
+        // Reset all markers when no hover
+        markersRef.current.forEach((marker) => {
+            marker.setIcon({
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: "#006acc",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 2,
+            });
+            marker.setZIndex(1);
+        });
+    }, [ui.hoveredGroup, isMapLoaded]);
 
     // Handle user location updates
     useEffect(() => {
