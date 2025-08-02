@@ -26,20 +26,30 @@ export default function GroupCard({ group }: GroupCardProps) {
   const spotsLeft = capacity - currentMembers;
   const isNew = Math.random() > 0.7; // 30% chance of being "new"
 
-  // Group type mapping
+  // Group type mapping - simplified titles only
   const groupTypes = [
     "Sermon-based",
-    "Activity-based (with sermon discussion)",
-    "How To Read The Bible (Curriculum-based)",
-    "Love This City (serving with city through our charity partners)",
-    "Alpha Pre-Marriage (Curriculum-based)",
-    "Alpha Marriage (Curriculum-based)",
-    "Alpha (New Christians)",
-    "Finding Freedom (Curriculum-based)",
+    "Activity-based",
+    "How To Read The Bible",
+    "Love This City",
+    "Alpha Pre-Marriage",
+    "Alpha Marriage",
+    "Alpha",
+    "Finding Freedom",
   ];
 
   const randomGroupType =
     groupTypes[Math.floor(Math.random() * groupTypes.length)];
+
+  // Multiple leaders (2-4 leaders)
+  const leaders = [
+    { name: "Sarah Mitchell", initials: "SM" },
+    { name: "David Chen", initials: "DC" },
+    { name: "Emily Rodriguez", initials: "ER" },
+    { name: "Michael Thompson", initials: "MT" },
+  ];
+  const numLeaders = Math.floor(Math.random() * 3) + 2; // 2-4 leaders
+  const groupLeaders = leaders.slice(0, numLeaders);
 
   const handleMouseEnter = () => {
     updateUIState({ hoveredGroup: group.id });
@@ -51,7 +61,7 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   return (
     <div
-      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
+      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -113,16 +123,26 @@ export default function GroupCard({ group }: GroupCardProps) {
           </span>
         </div>
 
-        {/* Leader Information - More Prominent */}
+        {/* Multiple Leaders Information */}
         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-bold">SM</span>
+          <div className="mb-2">
+            <div className="text-xs font-medium text-gray-600 mb-2">
+              Group Leaders
             </div>
-            <div>
-              <div className="font-semibold text-gray-900">Sarah Mitchell</div>
-              <div className="text-xs text-gray-600">Group Leader</div>
-            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {groupLeaders.map((leader, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">
+                    {leader.initials}
+                  </span>
+                </div>
+                <span className="text-xs font-medium text-gray-900">
+                  {leader.name}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 

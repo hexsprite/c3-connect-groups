@@ -5,7 +5,8 @@ import { useGroupStore } from "@/store/useGroupStore";
 import Select from "@/components/ui/Select";
 
 export default function SearchFilters() {
-  const { filters, updateFilters, clearFilters } = useGroupStore();
+  const { filters, updateFilters, clearFilters, ui, updateUIState } =
+    useGroupStore();
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFilters({ search: e.target.value });
@@ -49,28 +50,32 @@ export default function SearchFilters() {
     { key: "type", label: filters.type, condition: filters.type !== "⚥ Mixed" },
   ].filter((filter) => filter.condition);
 
+  const toggleView = (view: "list" | "map") => {
+    updateUIState({ view });
+  };
+
   return (
     <div
-      className="bg-white border-b border-gray-200 py-6 px-6"
+      className="bg-gray-50 border-b border-gray-200 py-8 px-6"
       id="groups-section"
     >
       <div className="max-w-7xl mx-auto">
         {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative max-w-2xl">
+        <div className="mb-8">
+          <div className="relative max-w-2xl mx-auto">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Search groups by name, location, or interest..."
               value={filters.search}
               onChange={handleSearchChange}
-              className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm bg-white"
             />
           </div>
         </div>
 
         {/* Filter Options */}
-        <div className="flex flex-wrap gap-4 mb-6">
+        <div className="flex flex-wrap justify-center gap-4 mb-6">
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-gray-500" />
             <Select
@@ -155,7 +160,7 @@ export default function SearchFilters() {
               {activeFilters.map((filter) => (
                 <div
                   key={filter.key}
-                  className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                  className="flex items-center gap-2 px-3 py-1 bg-white rounded-full text-sm text-gray-700 shadow-sm border border-gray-200"
                 >
                   <span>{filter.label}</span>
                   <button
@@ -180,11 +185,25 @@ export default function SearchFilters() {
           {/* View Toggle */}
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">View:</span>
-            <div className="flex bg-gray-100 rounded-lg p-1">
-              <button className="px-3 py-1 text-xs font-medium bg-white text-gray-900 rounded-md shadow-sm cursor-pointer">
+            <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+              <button
+                onClick={() => toggleView("list")}
+                className={`px-3 py-1 text-xs font-medium rounded-md shadow-sm cursor-pointer transition-colors ${
+                  ui.view === "list"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
                 List
               </button>
-              <button className="px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
+              <button
+                onClick={() => toggleView("map")}
+                className={`px-3 py-1 text-xs font-medium rounded-md shadow-sm cursor-pointer transition-colors ${
+                  ui.view === "map"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
                 Map
               </button>
             </div>
