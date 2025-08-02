@@ -1,6 +1,14 @@
 "use client";
 
-import { Search, X, Filter, MapPin, Clock, Users } from "lucide-react";
+import {
+  Search,
+  X,
+  Filter,
+  MapPin,
+  Clock,
+  Users,
+  BookOpen,
+} from "lucide-react";
 import { useGroupStore } from "@/store/useGroupStore";
 import Select from "@/components/ui/Select";
 
@@ -25,7 +33,9 @@ export default function SearchFilters() {
           ? "Any Day"
           : key === "time"
           ? "Any Time"
-          : "⚥ Mixed",
+          : key === "type"
+          ? "⚥ Mixed"
+          : "All Types",
     });
   };
 
@@ -33,7 +43,8 @@ export default function SearchFilters() {
     filters.location !== "All Locations" ||
     filters.day !== "Any Day" ||
     filters.time !== "Any Time" ||
-    filters.type !== "⚥ Mixed";
+    filters.type !== "⚥ Mixed" ||
+    filters.groupType !== "All Types";
 
   const activeFilters = [
     {
@@ -48,6 +59,11 @@ export default function SearchFilters() {
       condition: filters.time !== "Any Time",
     },
     { key: "type", label: filters.type, condition: filters.type !== "⚥ Mixed" },
+    {
+      key: "groupType",
+      label: filters.groupType,
+      condition: filters.groupType !== "All Types",
+    },
   ].filter((filter) => filter.condition);
 
   const toggleView = (view: "list" | "map") => {
@@ -136,6 +152,26 @@ export default function SearchFilters() {
               onValueChange={(value) => handleFilterChange("type", value)}
               options={["⚥ Mixed", "♂ Men", "♀ Women", "👥 All Types"]}
               placeholder="Group Type"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-gray-500" />
+            <Select
+              value={filters.groupType || "All Types"}
+              onValueChange={(value) => handleFilterChange("groupType", value)}
+              options={[
+                "All Types",
+                "Sermon-based (with sermon discussion)",
+                "Activity-based (with sermon discussion)",
+                "How To Read The Bible (Curriculum-based)",
+                "Love This City (serving with city through our charity partners)",
+                "Alpha Pre-Marriage (Curriculum-based)",
+                "Alpha Marriage (Curriculum-based)",
+                "Alpha (New Christians)",
+                "Finding Freedom (Curriculum-based)",
+              ]}
+              placeholder="Connect Group Type"
             />
           </div>
         </div>
