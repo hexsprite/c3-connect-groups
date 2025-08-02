@@ -48,7 +48,8 @@
 
 /* Global body styles matching C3 Webflow implementation */
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "Knockout-HTF66-FullFlyweight", "Helvetica Neue", Helvetica,
+    Arial, "Lucida Grande", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--c3-text-primary);
