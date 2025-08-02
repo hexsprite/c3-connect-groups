@@ -12,15 +12,15 @@ export default function Header() {
       <div className="w-full max-w-7xl mx-auto flex justify-between items-center">
         {/* C3 Toronto Logo - Dark rounded button with logo */}
         <div className="flex items-center">
-          <div className="bg-black text-white px-4 py-2 rounded-full text-sm font-bold tracking-wide flex items-center gap-2">
+          <div className="bg-black text-white px-4 py-2 rounded-full text-sm font-bold tracking-wide flex items-center gap-3">
             <Image
               src="https://cdn.prod.website-files.com/644dc19729bd36f5c52be3e0/644f2bdd5dc704127ada4cd4_c3-logo.svg"
               alt="C3 Logo"
-              width={20}
-              height={20}
-              className="w-5 h-5"
+              width={32}
+              height={32}
+              className="w-8 h-8"
             />
-            <span>TORONTO</span>
+            <span className="text-xs">TORONTO</span>
           </div>
         </div>
 
