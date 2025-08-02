@@ -92,7 +92,7 @@ export default function GroupCard({ group }: GroupCardProps) {
           className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors"
           disabled={!group.isOpen}
         >
-          LEARN MORE
+          REGISTER HERE
         </button>
       </div>
     </div>
