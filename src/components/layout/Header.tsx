@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header
       className="bg-white shadow-sm border-b h-16 flex items-center px-6"
-      style={{ borderColor: "var(--c3-border)" }}
+      style={{ borderColor: "var(--c3-border)", backgroundColor: "#f0f8ff" }}
     >
       <div className="w-full max-w-7xl mx-auto flex justify-between items-center">
         {/* C3 Toronto Logo */}
