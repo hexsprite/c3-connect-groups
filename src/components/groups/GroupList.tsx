@@ -112,9 +112,23 @@ export default function GroupList() {
     );
   }
 
+  // Calculate grid columns based on view state
+  const getGridColumns = () => {
+    switch (ui.view) {
+      case 'list':
+        return 'grid-cols-1 lg:grid-cols-3 xl:grid-cols-4'; // More columns in full-width list view
+      case 'split':
+        return 'grid-cols-1 lg:grid-cols-2'; // Original split view layout
+      case 'map':
+        return 'grid-cols-1'; // Not visible, but fallback
+      default:
+        return 'grid-cols-1 lg:grid-cols-2';
+    }
+  };
+
   return (
     <div className="h-full overflow-y-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+      <div className={`grid ${getGridColumns()} gap-6 p-6`}>
         {/* Data source indicator for development */}
         {process.env.NODE_ENV === 'development' && (
           <div className="col-span-full text-xs text-gray-500 mb-2 p-2 bg-gray-50 rounded">

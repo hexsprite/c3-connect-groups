@@ -44,7 +44,9 @@
         "react-dom": "^19.1.0",
         "react-hook-form": "^7.60.0",
         "tailwindcss": "^4.1.11",
-        "typescript": "^5.8.3",
         "zustand": "^5.0.6"
+    },
+    "devDependencies": {
+        "typescript": "^5.8.3"
     }
 }
