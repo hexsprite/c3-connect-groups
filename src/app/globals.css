@@ -1,15 +1,40 @@
 @import "tailwindcss";
 
-/* C3 Brand CSS Variables and Global Styles */
+/* C3 Brand CSS Variables and Global Styles - Official Design Tokens */
 :root {
-  --c3-primary-blue: #006acc;
-  --c3-selection-blue: #0073e6;
-  --c3-button-hover: #0084ff;
-  --c3-text-primary: #292929;
-  --c3-text-secondary: #404040;
-  --c3-border: #e5e5e5;
-  --c3-background: #ffffff;
-  --c3-warning-orange: #ffbc86;
+  /* Primary Colors */
+  --c3-blue: #0061ff;
+  --c3-yellow: #faff08;
+  --c3-kids: #e65400;
+
+  /* Greys */
+  --c3-grey-0: #f0f4fb;
+  --c3-grey-1: #dbe2ec;
+  --c3-grey-2: #aebacf;
+  --c3-grey-3: #667b9d;
+  --c3-grey-4: #3f506c;
+  --c3-grey-5: #1f2a3d;
+
+  /* Base Colors */
+  --c3-black: #1b2027;
+  --c3-white: white;
+
+  /* Status Colors */
+  --c3-error: #ec361d;
+  --c3-error-light: #fcefed;
+  --c3-warning: #ffba08;
+  --c3-warning-light: #faf6eb;
+  --c3-success: #4cc04b;
+  --c3-success-light: #e7fae7;
+
+  /* Semantic Color Mappings */
+  --c3-primary-blue: var(--c3-blue);
+  --c3-selection-blue: var(--c3-blue);
+  --c3-button-hover: #0052d6; /* Slightly darker blue for hover */
+  --c3-text-primary: var(--c3-black);
+  --c3-text-secondary: var(--c3-grey-4);
+  --c3-border: var(--c3-grey-1);
+  --c3-background: var(--c3-white);
 
   /* Spacing variables */
   --c3-xs: 8px;
@@ -66,11 +91,11 @@ body {
   .c3-button-primary:hover {
     background-color: var(--c3-button-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 106, 204, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 97, 255, 0.3);
   }
 
   .c3-button-primary:disabled {
-    background-color: #ccc;
+    background-color: var(--c3-grey-2);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -87,7 +112,7 @@ body {
   .c3-input:focus {
     border-color: var(--c3-selection-blue);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 115, 230, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 97, 255, 0.1);
   }
 
   .c3-card {
@@ -144,6 +169,22 @@ body {
   .c3-text-xs {
     font-size: 12px;
     line-height: 1.4;
+  }
+
+  /* Status-specific styles */
+  .c3-status-error {
+    background-color: var(--c3-error-light);
+    color: var(--c3-error);
+  }
+
+  .c3-status-warning {
+    background-color: var(--c3-warning-light);
+    color: var(--c3-warning);
+  }
+
+  .c3-status-success {
+    background-color: var(--c3-success-light);
+    color: var(--c3-success);
   }
 }
 

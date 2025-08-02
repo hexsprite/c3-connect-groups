@@ -96,8 +96,11 @@ export default function GroupCard({ group }: GroupCardProps) {
                 <span className="text-sm">⚥</span>
               )}
               <span
-                className="c3-text-xs font-medium px-2 py-1 bg-gray-100 rounded-full"
-                style={{ color: "var(--c3-text-secondary)" }}
+                className="c3-text-xs font-medium px-2 py-1 rounded-full"
+                style={{
+                  backgroundColor: "var(--c3-grey-0)",
+                  color: "var(--c3-grey-4)",
+                }}
               >
                 {group.groupType}
               </span>

@@ -132,8 +132,11 @@ export default function GroupList() {
         {/* Data source indicator for development */}
         {process.env.NODE_ENV === "development" && (
           <div
-            className="col-span-full c3-text-xs p-3 bg-gray-50 rounded-lg mb-4"
-            style={{ color: "var(--c3-text-secondary)" }}
+            className="col-span-full c3-text-xs p-3 rounded-lg mb-4"
+            style={{
+              backgroundColor: "var(--c3-grey-0)",
+              color: "var(--c3-grey-4)",
+            }}
           >
             📊 Data source: <strong>{dataSource}</strong>
             {lastUpdated && (

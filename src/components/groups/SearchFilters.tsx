@@ -158,8 +158,11 @@ export default function SearchFilters() {
               {activeFilters.map(([key, value]) => (
                 <div
                   key={key}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full c3-text-sm"
-                  style={{ color: "var(--c3-text-secondary)" }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full c3-text-sm"
+                  style={{
+                    backgroundColor: "var(--c3-grey-0)",
+                    color: "var(--c3-grey-4)",
+                  }}
                 >
                   <span>{value}</span>
                   <button
