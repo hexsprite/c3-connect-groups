@@ -24,12 +24,7 @@ export default function Select({
     <div className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="c3-input flex items-center justify-between w-full min-w-[140px] h-12 text-sm font-medium"
-        style={{
-          backgroundColor: "white",
-          borderColor: "var(--c3-border)",
-          color: "var(--c3-text-secondary)",
-        }}
+        className="flex items-center justify-between w-full min-w-[140px] px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
         <span className="truncate">{value || placeholder}</span>
         <ChevronDown
@@ -45,10 +40,7 @@ export default function Select({
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div
-            className="absolute top-full left-0 right-0 z-20 bg-white border rounded-lg shadow-lg mt-1 max-h-60 overflow-auto"
-            style={{ borderColor: "var(--c3-border)" }}
-          >
+          <div className="absolute top-full left-0 right-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-auto">
             {options.map((option) => (
               <button
                 key={option}
@@ -56,13 +48,10 @@ export default function Select({
                   onValueChange(option);
                   setIsOpen(false);
                 }}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors c3-text-sm"
+                className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors text-sm text-gray-700"
                 style={{
-                  color:
-                    value === option
-                      ? "var(--c3-primary-blue)"
-                      : "var(--c3-text-secondary)",
                   fontWeight: value === option ? "600" : "400",
+                  color: value === option ? "#2563eb" : "#374151",
                 }}
               >
                 {option}

@@ -30,14 +30,12 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   return (
     <div
-      className={`c3-card transition-all duration-300 ${
-        isHovered ? "scale-105 shadow-xl" : ""
-      }`}
+      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Group Image */}
-      <div className="relative w-full h-56 mb-6 rounded-lg overflow-hidden">
+      <div className="relative w-full h-48 overflow-hidden">
         <Image
           src={group.imageUrl || "/placeholder-group.jpg"}
           loading="lazy"
@@ -47,61 +45,41 @@ export default function GroupCard({ group }: GroupCardProps) {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         {!group.isOpen && (
-          <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-            Full
+          <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+            FULL
           </div>
         )}
       </div>
 
       {/* Group Info */}
-      <div className="space-y-4">
-        <h3
-          className="c3-heading c3-heading-sm mb-3"
-          style={{ color: "var(--c3-text-primary)" }}
-        >
-          {group.name}
-        </h3>
+      <div className="p-6">
+        <h3 className="text-xl font-bold mb-3 text-gray-900">{group.name}</h3>
 
-        <p
-          className="c3-text-sm line-clamp-3"
-          style={{ color: "var(--c3-text-secondary)" }}
-        >
+        <p className="text-gray-600 mb-4 text-sm leading-relaxed">
           {group.description}
         </p>
 
         {/* Metadata */}
-        <div
-          className="space-y-3 c3-text-sm"
-          style={{ color: "var(--c3-text-secondary)" }}
-        >
+        <div className="space-y-2 text-sm text-gray-500">
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span className="line-clamp-1">{group.location}</span>
+            <Clock className="w-4 h-4" />
+            <span>
+              {group.meetingDay === "TBD" ? "TBD" : `${group.meetingDay}s`},{" "}
+              {displayTime}
+            </span>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            <span>{group.location}</span>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 flex-shrink-0" />
-              <span>
-                {group.meetingDay === "TBD" ? "TBD" : `${group.meetingDay}s`},{" "}
-                {displayTime}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              {group.groupType === "Men" && <span className="text-sm">♂</span>}
-              {group.groupType === "Women" && (
-                <span className="text-sm">♀</span>
-              )}
-              {group.groupType === "Mixed" && (
-                <span className="text-sm">⚥</span>
-              )}
-              <span
-                className="c3-text-xs font-medium px-2 py-1 rounded-full"
-                style={{
-                  backgroundColor: "var(--c3-grey-0)",
-                  color: "var(--c3-grey-4)",
-                }}
-              >
+              {group.groupType === "Men" && <span>♂</span>}
+              {group.groupType === "Women" && <span>♀</span>}
+              {group.groupType === "Mixed" && <span>⚥</span>}
+              <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded-full">
                 {group.groupType}
               </span>
             </div>
@@ -111,11 +89,10 @@ export default function GroupCard({ group }: GroupCardProps) {
         {/* CTA Button */}
         <button
           onClick={() => window.open(group.planningCenterUrl, "_blank")}
-          className="c3-button-primary w-full mt-6"
+          className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors"
           disabled={!group.isOpen}
         >
-          <span>Learn More</span>
-          <ExternalLink className="w-4 h-4" />
+          LEARN MORE
         </button>
       </div>
     </div>

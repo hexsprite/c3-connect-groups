@@ -77,31 +77,20 @@ export default function SearchFilters() {
   };
 
   return (
-    <div
-      className="bg-white border-b"
-      style={{ borderColor: "var(--c3-border)" }}
-    >
+    <div className="bg-white border-b border-gray-200">
       {/* Search and Filter Row */}
       <div className="px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
             {/* Search Bar */}
             <div className="relative flex-1 max-w-md">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-                style={{ color: "var(--c3-text-secondary)" }}
-              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search for groups..."
                 value={filters.search}
                 onChange={handleSearchChange}
-                className="c3-input pl-10 w-full h-12 text-sm"
-                style={{
-                  backgroundColor: "white",
-                  borderColor: "var(--c3-border)",
-                  color: "var(--c3-text-primary)",
-                }}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -141,28 +130,18 @@ export default function SearchFilters() {
 
       {/* Active Filters Row */}
       {activeFilters.length > 0 && (
-        <div
-          className="px-6 py-3 border-t"
-          style={{ borderColor: "var(--c3-border)" }}
-        >
+        <div className="px-6 py-3 border-t border-gray-200">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-3 flex-wrap">
-              <div
-                className="flex items-center gap-2"
-                style={{ color: "var(--c3-text-secondary)" }}
-              >
+              <div className="flex items-center gap-2 text-gray-600">
                 <ChevronLeft className="w-4 h-4" />
-                <span className="c3-text-sm font-medium">Active Filters</span>
+                <span className="text-sm font-medium">Active Filters</span>
               </div>
 
               {activeFilters.map(([key, value]) => (
                 <div
                   key={key}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full c3-text-sm"
-                  style={{
-                    backgroundColor: "var(--c3-grey-0)",
-                    color: "var(--c3-grey-4)",
-                  }}
+                  className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
                 >
                   <span>{value}</span>
                   <button
@@ -177,17 +156,13 @@ export default function SearchFilters() {
               {activeFilters.length > 1 && (
                 <button
                   onClick={clearFilters}
-                  className="c3-text-sm hover:underline font-medium"
-                  style={{ color: "var(--c3-primary-blue)" }}
+                  className="text-sm text-blue-600 hover:underline font-medium"
                 >
                   Clear all
                 </button>
               )}
 
-              <div
-                className="ml-auto c3-text-sm font-semibold"
-                style={{ color: "var(--c3-text-primary)" }}
-              >
+              <div className="ml-auto text-sm font-bold text-gray-900">
                 {filteredCount} Group{filteredCount !== 1 ? "s" : ""}
               </div>
             </div>
