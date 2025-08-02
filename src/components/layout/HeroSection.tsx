@@ -15,7 +15,7 @@ export default function HeroSection() {
       <div className="max-w-4xl mx-auto text-center">
         {/* Main Heading */}
         <h1 className="text-5xl font-black uppercase tracking-tight mb-6 text-gray-900">
-          CONNECT GROUPS
+          JOIN A CONNECT GROUP
         </h1>
 
         {/* Description */}

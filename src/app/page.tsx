@@ -18,7 +18,7 @@ export default function Home() {
       {/* Content Area */}
       <div className="flex-1">
         {ui.view === "map" ? (
-          <div className="h-[calc(100vh-400px)] min-h-[500px]">
+          <div className="h-[calc(100vh-300px)] min-h-[600px] bg-gray-50">
             <MapView />
           </div>
         ) : (

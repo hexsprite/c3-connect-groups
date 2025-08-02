@@ -23,7 +23,13 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          '"Knockout-HTF66-FullFlyweight"',
+          '"Helvetica Neue"',
+          "Helvetica",
+          "Arial",
+          '"Lucida Grande"',
+          "sans-serif",
+        ],
+        display: [
           '"Helvetica Neue"',
           "Helvetica",
           "Arial",

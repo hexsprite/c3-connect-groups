@@ -4,6 +4,7 @@ import { MapPin, Clock, ExternalLink, Users, Star } from "lucide-react";
 import { Group } from "@/types";
 import { useGroupStore } from "@/store/useGroupStore";
 import Image from "next/image";
+import { useMemo } from "react";
 
 interface GroupCardProps {
   group: Group;
@@ -23,7 +24,6 @@ export default function GroupCard({ group }: GroupCardProps) {
   // Calculate capacity info
   const capacity = group.capacity || 12;
   const currentMembers = group.currentMemberCount || 8;
-  const isNew = Math.random() > 0.7; // 30% chance of being "new"
 
   // Group type mapping - simplified titles only
   const groupTypes = [
@@ -37,8 +37,10 @@ export default function GroupCard({ group }: GroupCardProps) {
     "Finding Freedom",
   ];
 
-  const randomGroupType =
-    groupTypes[Math.floor(Math.random() * groupTypes.length)];
+  // Use useMemo to ensure the group type doesn't change on hover
+  const randomGroupType = useMemo(() => {
+    return groupTypes[Math.floor(Math.random() * groupTypes.length)];
+  }, [group.id]); // Only recalculate when group.id changes
 
   // Multiple leaders (2-4 leaders) - simplified names
   const leaders = [
@@ -47,8 +49,12 @@ export default function GroupCard({ group }: GroupCardProps) {
     { name: "Emily Rodriguez", displayName: "Emily R." },
     { name: "Michael Thompson", displayName: "Michael T." },
   ];
-  const numLeaders = Math.floor(Math.random() * 3) + 2; // 2-4 leaders
-  const groupLeaders = leaders.slice(0, numLeaders);
+
+  // Use useMemo to ensure leaders don't change on hover
+  const groupLeaders = useMemo(() => {
+    const numLeaders = Math.floor(Math.random() * 3) + 2; // 2-4 leaders
+    return leaders.slice(0, numLeaders);
+  }, [group.id]); // Only recalculate when group.id changes
 
   // Get group type color
   const getGroupTypeColor = (type: string) => {
@@ -72,6 +78,16 @@ export default function GroupCard({ group }: GroupCardProps) {
     updateUIState({ hoveredGroup: null });
   };
 
+  const handleLocationClick = () => {
+    if (group.latitude && group.longitude) {
+      // Switch to map view and center on this group's location
+      updateUIState({ view: "map" });
+      // You could also update the map center here if needed
+      const mapUrl = `https://www.google.com/maps?q=${group.latitude},${group.longitude}`;
+      window.open(mapUrl, "_blank");
+    }
+  };
+
   return (
     <div
       className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 flex flex-col"
@@ -88,20 +104,6 @@ export default function GroupCard({ group }: GroupCardProps) {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-
-        {/* Badges */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2">
-          {!group.isOpen && (
-            <div className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-              FULL
-            </div>
-          )}
-          {isNew && (
-            <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-              NEW
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Group Info */}
@@ -116,10 +118,17 @@ export default function GroupCard({ group }: GroupCardProps) {
           {group.description}
         </p>
 
-        {/* Group Type */}
-        <div className="mb-4">
-          <span className="text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+        {/* Group Type and Group Type Badge - Combined */}
+        <div className="mb-4 flex items-center gap-2">
+          <span className="text-xs font-medium bg-green-100 text-green-700 px-3 py-1 rounded-full">
             {randomGroupType}
+          </span>
+          <span
+            className={`text-xs font-medium px-2 py-1 rounded-full ${getGroupTypeColor(
+              group.groupType
+            )}`}
+          >
+            {group.groupType}
           </span>
         </div>
 
@@ -151,30 +160,13 @@ export default function GroupCard({ group }: GroupCardProps) {
 
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span>{group.location}</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 flex-shrink-0" />
-            <span>
-              {group.groupType} Group • {capacity} max
-            </span>
-          </div>
-        </div>
-
-        {/* Group Type Badge */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            {group.groupType === "Men" && <span>♂</span>}
-            {group.groupType === "Women" && <span>♀</span>}
-            {group.groupType === "Mixed" && <span>⚥</span>}
-            <span
-              className={`text-xs font-medium px-2 py-1 rounded-full ${getGroupTypeColor(
-                group.groupType
-              )}`}
+            <button
+              onClick={handleLocationClick}
+              className="text-gray-500 hover:text-blue-600 hover:underline cursor-pointer transition-colors"
+              disabled={!group.latitude || !group.longitude}
             >
-              {group.groupType}
-            </span>
+              {group.location}
+            </button>
           </div>
         </div>
 
