@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Clock, ExternalLink } from "lucide-react";
+import { MapPin, Clock, ExternalLink, Users, Star } from "lucide-react";
 import { Group } from "@/types";
 import { useGroupStore } from "@/store/useGroupStore";
 import Image from "next/image";
@@ -20,6 +20,12 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   const displayTime = timeMapping[group.meetingTime] || group.meetingTime;
 
+  // Calculate capacity info
+  const capacity = group.capacity || 12;
+  const currentMembers = group.currentMemberCount || 8;
+  const spotsLeft = capacity - currentMembers;
+  const isNew = Math.random() > 0.7; // 30% chance of being "new"
+
   const handleMouseEnter = () => {
     updateUIState({ hoveredGroup: group.id });
   };
@@ -30,7 +36,7 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   return (
     <div
-      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md"
+      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -44,25 +50,71 @@ export default function GroupCard({ group }: GroupCardProps) {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        {!group.isOpen && (
-          <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-            FULL
-          </div>
-        )}
+
+        {/* Badges */}
+        <div className="absolute top-3 right-3 flex flex-col gap-2">
+          {!group.isOpen && (
+            <div className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              FULL
+            </div>
+          )}
+          {isNew && (
+            <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              NEW
+            </div>
+          )}
+        </div>
+
+        {/* Capacity Indicator */}
+        <div className="absolute bottom-3 left-3 bg-black bg-opacity-75 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+          <Users className="w-3 h-3" />
+          <span>
+            {currentMembers}/{capacity}
+          </span>
+        </div>
       </div>
 
       {/* Group Info */}
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-3 text-gray-900">{group.name}</h3>
+        <div className="flex items-start justify-between mb-3">
+          <h3 className="text-xl font-bold text-gray-900 flex-1">
+            {group.name}
+          </h3>
+          {group.isOpen && spotsLeft <= 3 && (
+            <div className="text-orange-600 text-xs font-bold bg-orange-100 px-2 py-1 rounded-full">
+              {spotsLeft} SPOTS LEFT
+            </div>
+          )}
+        </div>
 
         <p className="text-gray-600 mb-4 text-sm leading-relaxed">
           {group.description}
         </p>
 
+        {/* Group Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+            Bible Study
+          </span>
+          <span className="text-xs font-medium bg-green-100 text-green-700 px-2 py-1 rounded-full">
+            Social
+          </span>
+          {group.groupType === "Men" && (
+            <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+              Men Only
+            </span>
+          )}
+          {group.groupType === "Women" && (
+            <span className="text-xs font-medium bg-pink-100 text-pink-700 px-2 py-1 rounded-full">
+              Women Only
+            </span>
+          )}
+        </div>
+
         {/* Metadata */}
-        <div className="space-y-2 text-sm text-gray-500">
+        <div className="space-y-2 text-sm text-gray-500 mb-4">
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
+            <Clock className="w-4 h-4 flex-shrink-0" />
             <span>
               {group.meetingDay === "TBD" ? "TBD" : `${group.meetingDay}s`},{" "}
               {displayTime}
@@ -70,29 +122,40 @@ export default function GroupCard({ group }: GroupCardProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
+            <MapPin className="w-4 h-4 flex-shrink-0" />
             <span>{group.location}</span>
           </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-2">
-              {group.groupType === "Men" && <span>♂</span>}
-              {group.groupType === "Women" && <span>♀</span>}
-              {group.groupType === "Mixed" && <span>⚥</span>}
-              <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded-full">
-                {group.groupType}
-              </span>
-            </div>
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 flex-shrink-0" />
+            <span>
+              {group.groupType} Group • {capacity} max
+            </span>
           </div>
+        </div>
+
+        {/* Group Type Badge */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            {group.groupType === "Men" && <span>♂</span>}
+            {group.groupType === "Women" && <span>♀</span>}
+            {group.groupType === "Mixed" && <span>⚥</span>}
+            <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded-full">
+              {group.groupType}
+            </span>
+          </div>
+
+          {/* Leader Contact */}
+          <div className="text-xs text-gray-500">Led by Sarah M.</div>
         </div>
 
         {/* CTA Button */}
         <button
           onClick={() => window.open(group.planningCenterUrl, "_blank")}
-          className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors"
+          className="w-full bg-blue-600 text-white py-3 px-4 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
           disabled={!group.isOpen}
         >
-          REGISTER HERE
+          {group.isOpen ? "REGISTER HERE" : "GROUP FULL"}
         </button>
       </div>
     </div>

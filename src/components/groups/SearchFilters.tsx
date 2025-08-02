@@ -1,174 +1,196 @@
 "use client";
 
-import { Search, X, ChevronLeft } from "lucide-react";
+import { Search, X, Filter, MapPin, Clock, Users } from "lucide-react";
 import { useGroupStore } from "@/store/useGroupStore";
-import { filterOptions } from "@/lib/mockData";
-import { groupSearchService } from "@/lib/search";
 import Select from "@/components/ui/Select";
-import { useMemo } from "react";
 
 export default function SearchFilters() {
-  const { filters, updateFilters, clearFilters, groups, map } = useGroupStore();
-
-  // Calculate filtered count (including map bounds and FlexSearch)
-  const filteredCount = useMemo(() => {
-    // Start with search-filtered groups using FlexSearch
-    let searchFilteredGroups = groups;
-    if (filters.search) {
-      searchFilteredGroups = groupSearchService.search(filters.search);
-    }
-
-    // Apply other filters to search results
-    return searchFilteredGroups.filter((group) => {
-      // Location filter
-      if (filters.location && !filters.location.includes("All")) {
-        if (group.campusLocation !== filters.location) return false;
-      }
-
-      // Day filter
-      if (filters.day && !filters.day.includes("Any")) {
-        if (group.meetingDay !== filters.day) return false;
-      }
-
-      // Time filter
-      if (filters.time && !filters.time.includes("Any")) {
-        if (group.meetingTime !== filters.time) return false;
-      }
-
-      // Type filter
-      if (filters.type && !filters.type.includes("Mixed")) {
-        // Extract the actual type from the dropdown value (e.g., "♂ Men" -> "Men")
-        const actualType = filters.type.split(" ").slice(1).join(" ");
-        if (group.groupType !== actualType) return false;
-      }
-
-      // Map bounds filter - only count groups visible on the map
-      if (map.bounds && group.latitude && group.longitude) {
-        const groupPosition = new google.maps.LatLng(
-          group.latitude,
-          group.longitude
-        );
-        if (!map.bounds.contains(groupPosition)) {
-          return false;
-        }
-      }
-
-      return true;
-    }).length;
-  }, [groups, filters, map.bounds]);
-
-  const activeFilters = Object.entries(filters).filter(([key, value]) => {
-    if (key === "search") return value.length > 0;
-    return !value.includes("All") && !value.includes("Any");
-  });
+  const { filters, updateFilters, clearFilters } = useGroupStore();
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFilters({ search: e.target.value });
   };
 
-  const removeFilter = (key: string) => {
-    const defaultValues: Record<string, string> = {
-      location: "All Locations",
-      day: "Any Day",
-      time: "Any Time",
-      type: "⚥ Mixed",
-    };
-    updateFilters({ [key]: defaultValues[key] || "" });
+  const handleFilterChange = (key: string, value: string) => {
+    updateFilters({ [key]: value });
   };
 
+  const removeFilter = (key: string) => {
+    updateFilters({
+      [key]:
+        key === "location"
+          ? "All Locations"
+          : key === "day"
+          ? "Any Day"
+          : key === "time"
+          ? "Any Time"
+          : "⚥ Mixed",
+    });
+  };
+
+  const hasActiveFilters =
+    filters.location !== "All Locations" ||
+    filters.day !== "Any Day" ||
+    filters.time !== "Any Time" ||
+    filters.type !== "⚥ Mixed";
+
+  const activeFilters = [
+    {
+      key: "location",
+      label: filters.location,
+      condition: filters.location !== "All Locations",
+    },
+    { key: "day", label: filters.day, condition: filters.day !== "Any Day" },
+    {
+      key: "time",
+      label: filters.time,
+      condition: filters.time !== "Any Time",
+    },
+    { key: "type", label: filters.type, condition: filters.type !== "⚥ Mixed" },
+  ].filter((filter) => filter.condition);
+
   return (
-    <div className="bg-white border-b border-gray-200">
-      {/* Search and Filter Row */}
-      <div className="px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
-            {/* Search Bar */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search for groups..."
-                value={filters.search}
-                onChange={handleSearchChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Filter Dropdowns */}
-            <div className="flex flex-wrap gap-3">
-              <Select
-                value={filters.location}
-                onValueChange={(value) => updateFilters({ location: value })}
-                options={filterOptions.locations}
-                placeholder="Location"
-              />
-
-              <Select
-                value={filters.day}
-                onValueChange={(value) => updateFilters({ day: value })}
-                options={filterOptions.days}
-                placeholder="Day"
-              />
-
-              <Select
-                value={filters.time}
-                onValueChange={(value) => updateFilters({ time: value })}
-                options={filterOptions.times}
-                placeholder="Time"
-              />
-
-              <Select
-                value={filters.type}
-                onValueChange={(value) => updateFilters({ type: value })}
-                options={filterOptions.types}
-                placeholder="Type"
-              />
-            </div>
+    <div
+      className="bg-white border-b border-gray-200 py-6 px-6"
+      id="groups-section"
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-2xl">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search groups by name, location, or interest..."
+              value={filters.search}
+              onChange={handleSearchChange}
+              className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+            />
           </div>
         </div>
-      </div>
 
-      {/* Active Filters Row */}
-      {activeFilters.length > 0 && (
-        <div className="px-6 py-3 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center gap-3 flex-wrap">
+        {/* Filter Options */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-gray-500" />
+            <Select
+              value={filters.location}
+              onValueChange={(value) => handleFilterChange("location", value)}
+              options={[
+                "All Locations",
+                "Downtown",
+                "Midtown",
+                "Hamilton",
+                "North York",
+                "Scarborough",
+                "Etobicoke",
+              ]}
+              placeholder="Location"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-gray-500" />
+            <Select
+              value={filters.day}
+              onValueChange={(value) => handleFilterChange("day", value)}
+              options={[
+                "Any Day",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday",
+              ]}
+              placeholder="Day"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-gray-500" />
+            <Select
+              value={filters.time}
+              onValueChange={(value) => handleFilterChange("time", value)}
+              options={[
+                "Any Time",
+                "Morning (9:00 AM)",
+                "Afternoon (2:00 PM)",
+                "Evening (7:00 PM)",
+                "Weekends",
+              ]}
+              placeholder="Time"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-gray-500" />
+            <Select
+              value={filters.type}
+              onValueChange={(value) => handleFilterChange("type", value)}
+              options={["⚥ Mixed", "♂ Men", "♀ Women", "👥 All Types"]}
+              placeholder="Group Type"
+            />
+          </div>
+        </div>
+
+        {/* Active Filters */}
+        {hasActiveFilters && (
+          <div className="border-t border-gray-200 pt-4">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 text-gray-600">
-                <ChevronLeft className="w-4 h-4" />
-                <span className="text-sm font-medium">Active Filters</span>
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium">Active Filters:</span>
               </div>
+              <button
+                onClick={clearFilters}
+                className="text-sm text-blue-600 hover:underline font-medium"
+              >
+                Clear All
+              </button>
+            </div>
 
-              {activeFilters.map(([key, value]) => (
+            <div className="flex flex-wrap gap-3">
+              {activeFilters.map((filter) => (
                 <div
-                  key={key}
+                  key={filter.key}
                   className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
                 >
-                  <span>{value}</span>
+                  <span>{filter.label}</span>
                   <button
-                    onClick={() => removeFilter(key)}
-                    className="hover:bg-gray-200 rounded-full p-1 transition-colors"
+                    onClick={() => removeFilter(filter.key)}
+                    className="text-gray-500 hover:text-gray-700"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
 
-              {activeFilters.length > 1 && (
-                <button
-                  onClick={clearFilters}
-                  className="text-sm text-blue-600 hover:underline font-medium"
-                >
-                  Clear all
-                </button>
-              )}
+        {/* Results Count */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          <div className="text-sm text-gray-600">
+            Showing <span className="font-bold text-gray-900">24 groups</span>
+            {filters.search && ` matching "${filters.search}"`}
+          </div>
 
-              <div className="ml-auto text-sm font-bold text-gray-900">
-                {filteredCount} Group{filteredCount !== 1 ? "s" : ""}
-              </div>
+          {/* View Toggle */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">View:</span>
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              <button className="px-3 py-1 text-xs font-medium bg-white text-gray-900 rounded-md shadow-sm">
+                List
+              </button>
+              <button className="px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-900">
+                Map
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
