@@ -26,6 +26,21 @@ export default function GroupCard({ group }: GroupCardProps) {
   const spotsLeft = capacity - currentMembers;
   const isNew = Math.random() > 0.7; // 30% chance of being "new"
 
+  // Group type mapping
+  const groupTypes = [
+    "Sermon-based",
+    "Activity-based (with sermon discussion)",
+    "How To Read The Bible (Curriculum-based)",
+    "Love This City (serving with city through our charity partners)",
+    "Alpha Pre-Marriage (Curriculum-based)",
+    "Alpha Marriage (Curriculum-based)",
+    "Alpha (New Christians)",
+    "Finding Freedom (Curriculum-based)",
+  ];
+
+  const randomGroupType =
+    groupTypes[Math.floor(Math.random() * groupTypes.length)];
+
   const handleMouseEnter = () => {
     updateUIState({ hoveredGroup: group.id });
   };
@@ -36,7 +51,7 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   return (
     <div
-      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -91,24 +106,24 @@ export default function GroupCard({ group }: GroupCardProps) {
           {group.description}
         </p>
 
-        {/* Group Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-            Bible Study
+        {/* Group Type */}
+        <div className="mb-4">
+          <span className="text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+            {randomGroupType}
           </span>
-          <span className="text-xs font-medium bg-green-100 text-green-700 px-2 py-1 rounded-full">
-            Social
-          </span>
-          {group.groupType === "Men" && (
-            <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-              Men Only
-            </span>
-          )}
-          {group.groupType === "Women" && (
-            <span className="text-xs font-medium bg-pink-100 text-pink-700 px-2 py-1 rounded-full">
-              Women Only
-            </span>
-          )}
+        </div>
+
+        {/* Leader Information - More Prominent */}
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm font-bold">SM</span>
+            </div>
+            <div>
+              <div className="font-semibold text-gray-900">Sarah Mitchell</div>
+              <div className="text-xs text-gray-600">Group Leader</div>
+            </div>
+          </div>
         </div>
 
         {/* Metadata */}
@@ -144,15 +159,12 @@ export default function GroupCard({ group }: GroupCardProps) {
               {group.groupType}
             </span>
           </div>
-
-          {/* Leader Contact */}
-          <div className="text-xs text-gray-500">Led by Sarah M.</div>
         </div>
 
         {/* CTA Button */}
         <button
           onClick={() => window.open(group.planningCenterUrl, "_blank")}
-          className="w-full bg-blue-600 text-white py-3 px-4 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 text-white py-3 px-4 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
           disabled={!group.isOpen}
         >
           {group.isOpen ? "REGISTER HERE" : "GROUP FULL"}

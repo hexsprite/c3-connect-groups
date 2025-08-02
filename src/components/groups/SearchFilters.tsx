@@ -145,7 +145,7 @@ export default function SearchFilters() {
               </div>
               <button
                 onClick={clearFilters}
-                className="text-sm text-blue-600 hover:underline font-medium"
+                className="text-sm text-blue-600 hover:underline font-medium cursor-pointer"
               >
                 Clear All
               </button>
@@ -160,7 +160,7 @@ export default function SearchFilters() {
                   <span>{filter.label}</span>
                   <button
                     onClick={() => removeFilter(filter.key)}
-                    className="text-gray-500 hover:text-gray-700"
+                    className="text-gray-500 hover:text-gray-700 cursor-pointer"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -181,10 +181,10 @@ export default function SearchFilters() {
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">View:</span>
             <div className="flex bg-gray-100 rounded-lg p-1">
-              <button className="px-3 py-1 text-xs font-medium bg-white text-gray-900 rounded-md shadow-sm">
+              <button className="px-3 py-1 text-xs font-medium bg-white text-gray-900 rounded-md shadow-sm cursor-pointer">
                 List
               </button>
-              <button className="px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-900">
+              <button className="px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 cursor-pointer">
                 Map
               </button>
             </div>
