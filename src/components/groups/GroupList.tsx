@@ -73,8 +73,8 @@ export default function GroupList() {
         if (group.groupType !== actualType) return false;
       }
 
-      // Map bounds filter - only show groups visible on the map
-      if (map.bounds && group.latitude && group.longitude) {
+      // Map bounds filter - only show groups visible on the map when map is visible
+      if (ui.view !== 'list' && map.bounds && group.latitude && group.longitude) {
         const groupPosition = new google.maps.LatLng(group.latitude, group.longitude);
         if (!map.bounds.contains(groupPosition)) {
           return false;
