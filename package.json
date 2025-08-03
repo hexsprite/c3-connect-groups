@@ -4,7 +4,7 @@
     "description": "C3 Toronto Connect Groups discovery platform",
     "scripts": {
         "dev": "next dev --turbopack",
-        "build": "npm run generate-groups && next build",
+        "build": "next build",
         "start": "next start",
         "lint": "next lint",
         "type-check": "tsc --noEmit",

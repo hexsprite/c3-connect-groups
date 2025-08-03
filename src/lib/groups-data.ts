@@ -13,6 +13,7 @@ interface GroupsDataFile {
 
 /**
  * Load groups data from the static JSON file or fallback to mock data
+ * If groups.json doesn't exist, it will trigger initialization
  */
 export async function loadGroupsData(): Promise<{
   groups: Group[]
@@ -44,9 +45,35 @@ export async function loadGroupsData(): Promise<{
         groups: groupsWithNumericCoords,
         metadata: data.metadata,
       }
+    } else if (response.status === 404) {
+      // File doesn't exist, trigger initialization
+      console.log('⚠️ groups.json not found, attempting to initialize...')
+      await triggerInitialization()
+      
+      // Retry loading after initialization
+      const retryResponse = await fetch('/groups.json', {
+        cache: 'no-cache'
+      })
+      
+      if (retryResponse.ok) {
+        const data: GroupsDataFile = await retryResponse.json()
+        console.log(`✅ Successfully loaded ${data.groups.length} groups after initialization`)
+        
+        const groupsWithNumericCoords = data.groups.map(group => ({
+          ...group,
+          latitude: typeof group.latitude === 'string' ? parseFloat(group.latitude) : group.latitude,
+          longitude: typeof group.longitude === 'string' ? parseFloat(group.longitude) : group.longitude,
+        }))
+
+        return {
+          groups: groupsWithNumericCoords,
+          metadata: data.metadata,
+        }
+      } else {
+        throw new Error('Initialization failed')
+      }
     } else {
-      console.warn('⚠️ groups.json not found, falling back to mock data')
-      throw new Error('groups.json not found')
+      throw new Error(`HTTP ${response.status}`)
     }
   } catch (error) {
     console.warn('⚠️ Failed to load groups.json, using mock data:', error)
@@ -60,6 +87,29 @@ export async function loadGroupsData(): Promise<{
         source: 'mock-data',
       },
     }
+  }
+}
+
+/**
+ * Trigger groups data initialization
+ */
+async function triggerInitialization(): Promise<void> {
+  try {
+    console.log('🚀 Triggering groups data initialization...')
+    const response = await fetch('/api/initialize', {
+      method: 'POST',
+      cache: 'no-cache'
+    })
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.details || 'Initialization failed')
+    }
+    
+    console.log('✅ Groups data initialization completed')
+  } catch (error) {
+    console.error('❌ Failed to initialize groups data:', error)
+    throw error
   }
 }
 
