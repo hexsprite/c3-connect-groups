@@ -29,7 +29,7 @@ export default function HomePage() {
       case 'split':
         return `w-full lg:w-3/5 ${baseClasses} border-r`;
       case 'map':
-        return `hidden ${baseClasses}`;
+        return `w-0 ${baseClasses}`; // Use w-0 instead of hidden for smooth animation
       default:
         return `w-full lg:w-3/5 ${baseClasses} border-r`;
     }
@@ -40,7 +40,7 @@ export default function HomePage() {
     
     switch (ui.view) {
       case 'list':
-        return `hidden ${baseClasses}`;
+        return `w-0 ${baseClasses}`; // Use w-0 instead of hidden for smooth animation
       case 'split':
         return `w-full lg:w-2/5 ${baseClasses}`;
       case 'map':
@@ -66,12 +66,16 @@ export default function HomePage() {
           className={getLeftPanelClasses()} 
           style={{ borderColor: ui.view === 'split' ? 'var(--c3-border)' : 'transparent' }}
         >
-          <GroupList />
+          <div className={`w-full h-full ${ui.view === 'map' ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity duration-300`}>
+            <GroupList />
+          </div>
         </div>
         
         {/* Right Panel - Map View (Dynamic width based on view state) */}
         <div className={getRightPanelClasses()}>
-          <MapView />
+          <div className={`w-full h-full ${ui.view === 'list' ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity duration-300`}>
+            <MapView />
+          </div>
         </div>
       </div>
     </main>
