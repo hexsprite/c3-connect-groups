@@ -159,6 +159,10 @@ export default function MapView() {
                                 mapTypeControl: false,
                                 fullscreenControl: false,
                                 streetViewControl: false,
+                                zoomControl: false,
+                                panControl: false,
+                                rotateControl: false,
+                                scaleControl: false,
                             });
 
                             mapInstanceRef.current = map;
@@ -571,7 +575,7 @@ export default function MapView() {
             <button
                 onClick={getUserLocation}
                 disabled={locationPermission === "denied"}
-                className="absolute top-4 right-4 bg-white shadow-lg rounded-lg p-3 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute bottom-4 right-4 bg-white shadow-lg rounded-lg p-3 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border"
                 style={{ borderColor: "var(--c3-border)" }}
                 title={
                     locationPermission === "denied"
