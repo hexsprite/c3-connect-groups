@@ -7,7 +7,7 @@ import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import { loadGroupsData } from "@/lib/groups-data";
 
 export default function GroupList() {
-  const { groups, setGroups, filters, ui, updateUIState } = useGroupStore();
+  const { groups, setGroups, filters, updateUIState } = useGroupStore();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -92,8 +92,6 @@ export default function GroupList() {
 
       // Group type filter
       if (filters.groupType !== "All Types") {
-        // Extract the main type from the filter (before the brackets)
-        const filterType = filters.groupType.split(" (")[0];
         // For now, we'll use a simple check - you might want to add a groupType field to your Group interface
         // This is a placeholder - you'll need to add actual group type data to your mock data
         return true; // Placeholder - will need to implement based on your data structure

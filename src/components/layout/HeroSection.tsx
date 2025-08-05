@@ -1,14 +1,6 @@
 "use client";
 
-import { useGroupStore } from "@/store/useGroupStore";
-
 export default function HeroSection() {
-  const scrollToGroups = () => {
-    const groupsSection = document.getElementById("groups-section");
-    if (groupsSection) {
-      groupsSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   return (
     <section className="bg-white py-16 px-6">

@@ -2,24 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useGroupStore } from "@/store/useGroupStore";
-import { Group } from "@/types";
 
 declare global {
   interface Window {
-    google: any;
+    google: {
+      maps: {
+        Map: new (element: HTMLElement, options: unknown) => unknown;
+        Marker: new (options: unknown) => unknown;
+        InfoWindow: new (options: unknown) => unknown;
+        Size: new (width: number, height: number) => unknown;
+      };
+    };
   }
 }
 
 // Track if Google Maps script is already loaded
-let googleMapsLoaded = false;
 let googleMapsLoading = false;
 
 export default function MapView() {
-  const { groups, map, updateMapState, ui, updateUIState } = useGroupStore();
+  const { groups, updateMapState, updateUIState } = useGroupStore();
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const mapInstanceRef = useRef<unknown>(null);
+  const markersRef = useRef<unknown[]>([]);
   const [mapError, setMapError] = useState(false);
 
   // Check if we have a valid Google Maps API key
@@ -29,44 +33,43 @@ export default function MapView() {
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY !==
       "your_google_maps_api_key_here";
 
-  const showFallbackContent = () => {
-    if (mapRef.current) {
-      mapRef.current.innerHTML = `
-        <div class="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
-          <div class="text-center p-6">
-            <div class="text-gray-500 mb-4">
-              <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Map View</h3>
-            <p class="text-sm text-gray-600 mb-4">Showing ${
-              groups.length
-            } groups in Toronto area</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-500">
-              <div>📍 ${
-                groups.filter((g) => g.campusLocation === "Downtown").length
-              } Downtown Groups</div>
-              <div>📍 ${
-                groups.filter((g) => g.campusLocation === "Midtown").length
-              } Midtown Groups</div>
-              <div>📍 ${
-                groups.filter((g) => g.campusLocation === "Hamilton").length
-              } Hamilton Groups</div>
-            </div>
-            ${
-              !hasValidApiKey
-                ? '<p class="text-xs text-gray-500 mt-4">Add a valid Google Maps API key to see the interactive map</p>'
-                : ""
-            }
-          </div>
-        </div>
-      `;
-    }
-  };
-
   useEffect(() => {
+    const showFallbackContent = () => {
+      if (mapRef.current) {
+        mapRef.current.innerHTML = `
+          <div class="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+            <div class="text-center p-6">
+              <div class="text-gray-500 mb-4">
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Map View</h3>
+              <p class="text-sm text-gray-600 mb-4">Showing ${
+                groups.length
+              } groups in Toronto area</p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-500">
+                <div>📍 ${
+                  groups.filter((g) => g.campusLocation === "Downtown").length
+                } Downtown Groups</div>
+                <div>📍 ${
+                  groups.filter((g) => g.campusLocation === "Midtown").length
+                } Midtown Groups</div>
+                <div>📍 ${
+                  groups.filter((g) => g.campusLocation === "Hamilton").length
+                } Hamilton Groups</div>
+              </div>
+              ${
+                !hasValidApiKey
+                  ? '<p class="text-xs text-gray-500 mt-4">Add a valid Google Maps API key to see the interactive map</p>'
+                  : ""
+              }
+            </div>
+          </div>
+        `;
+      }
+    };
     // If no valid API key, show fallback immediately
     if (!hasValidApiKey) {
       console.log(
@@ -80,7 +83,6 @@ export default function MapView() {
     // Load Google Maps script only if we have a valid API key
     const loadGoogleMaps = () => {
       if (window.google && window.google.maps) {
-        googleMapsLoaded = true;
         initializeMap();
       } else if (!googleMapsLoading) {
         googleMapsLoading = true;
@@ -89,7 +91,6 @@ export default function MapView() {
         script.async = true;
         script.defer = true;
         script.onload = () => {
-          googleMapsLoaded = true;
           googleMapsLoading = false;
           initializeMap();
         };
@@ -129,7 +130,6 @@ export default function MapView() {
           mapRef.current,
           mapOptions
         );
-        setIsMapLoaded(true);
 
         // Add markers for groups with coordinates
         groups.forEach((group) => {
@@ -185,8 +185,10 @@ export default function MapView() {
               `,
             });
 
-            marker.addListener("click", () => {
-              infoWindow.open(mapInstanceRef.current, marker);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (marker as any).addListener("click", () => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (infoWindow as any).open(mapInstanceRef.current, marker);
               updateUIState({ selectedGroup: group.id });
             });
 
@@ -195,8 +197,10 @@ export default function MapView() {
         });
 
         // Update map state when bounds change
-        mapInstanceRef.current.addListener("bounds_changed", () => {
-          const bounds = mapInstanceRef.current.getBounds();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (mapInstanceRef.current as any).addListener("bounds_changed", () => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const bounds = (mapInstanceRef.current as any).getBounds();
           updateMapState({ bounds });
         });
       } catch (error) {
@@ -211,7 +215,8 @@ export default function MapView() {
     return () => {
       // Clean up markers
       markersRef.current.forEach((marker) => {
-        marker.setMap(null);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (marker as any).setMap(null);
       });
       markersRef.current = [];
     };

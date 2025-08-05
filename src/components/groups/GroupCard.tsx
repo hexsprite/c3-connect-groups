@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Clock, ExternalLink, Users, Star } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 import { Group } from "@/types";
 import { useGroupStore } from "@/store/useGroupStore";
 import Image from "next/image";
@@ -11,8 +11,7 @@ interface GroupCardProps {
 }
 
 export default function GroupCard({ group }: GroupCardProps) {
-  const { ui, updateUIState } = useGroupStore();
-  const isHovered = ui.hoveredGroup === group.id;
+  const { updateUIState } = useGroupStore();
   const timeMapping: Record<string, string> = {
     Morning: "9:00 AM",
     Afternoon: "2:00 PM",
@@ -21,39 +20,33 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   const displayTime = timeMapping[group.meetingTime] || group.meetingTime;
 
-  // Calculate capacity info
-  const capacity = group.capacity || 12;
-  const currentMembers = group.currentMemberCount || 8;
-
-  // Group type mapping - simplified titles only
-  const groupTypes = [
-    "Sermon-based",
-    "Activity-based",
-    "How To Read The Bible",
-    "Love This City",
-    "Alpha Pre-Marriage",
-    "Alpha Marriage",
-    "Alpha",
-    "Finding Freedom",
-  ];
-
   // Use useMemo to ensure the group type doesn't change on hover
   const randomGroupType = useMemo(() => {
+    const groupTypes = [
+      "Sermon-based",
+      "Activity-based",
+      "How To Read The Bible",
+      "Love This City",
+      "Alpha Pre-Marriage",
+      "Alpha Marriage",
+      "Alpha",
+      "Finding Freedom",
+    ];
     return groupTypes[Math.floor(Math.random() * groupTypes.length)];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group.id]); // Only recalculate when group.id changes
-
-  // Multiple leaders (2-4 leaders) - simplified names
-  const leaders = [
-    { name: "Sarah Mitchell", displayName: "Sarah M." },
-    { name: "David Chen", displayName: "David C." },
-    { name: "Emily Rodriguez", displayName: "Emily R." },
-    { name: "Michael Thompson", displayName: "Michael T." },
-  ];
 
   // Use useMemo to ensure leaders don't change on hover
   const groupLeaders = useMemo(() => {
+    const leaders = [
+      { name: "Sarah Mitchell", displayName: "Sarah M." },
+      { name: "David Chen", displayName: "David C." },
+      { name: "Emily Rodriguez", displayName: "Emily R." },
+      { name: "Michael Thompson", displayName: "Michael T." },
+    ];
     const numLeaders = Math.floor(Math.random() * 3) + 2; // 2-4 leaders
     return leaders.slice(0, numLeaders);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group.id]); // Only recalculate when group.id changes
 
   // Get group type color
