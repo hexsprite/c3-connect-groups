@@ -1,14 +1,14 @@
-import { Group } from '@/types'
-import { mockGroups } from './mockData'
+import { Group } from "@/types";
+import { mockGroups } from "./mockData";
 
 interface GroupsDataFile {
   metadata: {
-    lastUpdated: string
-    totalGroups: number
-    version: string
-    source: string
-  }
-  groups: Group[]
+    lastUpdated: string;
+    totalGroups: number;
+    version: string;
+    source: string;
+  };
+  groups: Group[];
 }
 
 /**
@@ -16,14 +16,13 @@ interface GroupsDataFile {
  * If groups.json doesn't exist, it will trigger initialization
  */
 export async function loadGroupsData(): Promise<{
-  groups: Group[]
-  metadata?: GroupsDataFile['metadata']
+  groups: Group[];
+  metadata?: GroupsDataFile["metadata"];
 }> {
   try {
-    // Try to fetch from the static file first
+    // Try to load from the static JSON file first
     const response = await fetch('/groups.json', {
-      // Add cache busting for development
-      cache: process.env.NODE_ENV === 'development' ? 'no-cache' : 'default',
+      cache: 'no-cache'
     })
 
     if (response.ok) {
@@ -114,4 +113,4 @@ async function triggerInitialization(): Promise<void> {
 }
 
 // Export for server-side usage
-export { loadGroupsData as getGroupsData }
+export { loadGroupsData as getGroupsData };
