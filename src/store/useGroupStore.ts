@@ -1,24 +1,25 @@
-import { create } from 'zustand';
-import { AppState, Group, GroupFilters, MapState, UIState } from '@/types';
+import { create } from "zustand";
+import { AppState, Group, GroupFilters, MapState, UIState } from "@/types";
 
 const defaultFilters: GroupFilters = {
-  search: '',
-  location: 'All Locations',
-  day: 'Any Day',
-  time: 'Any Time',
-  type: '⚥ Mixed'
+  search: "",
+  location: "All Locations",
+  day: "Any Day",
+  time: "Any Time",
+  type: "⚥ Mixed",
+  groupType: "All Types",
 };
 
 const defaultMapState: MapState = {
   center: { lat: 43.6532, lng: -79.3832 }, // Toronto center
-  zoom: 11
+  zoom: 11,
 };
 
 const defaultUIState: UIState = {
   loading: false,
-  view: 'split',
+  view: "split",
   selectedGroup: null,
-  hoveredGroup: null
+  hoveredGroup: null,
 };
 
 export const useGroupStore = create<AppState>((set) => ({
@@ -31,18 +32,18 @@ export const useGroupStore = create<AppState>((set) => ({
 
   updateFilters: (newFilters: Partial<GroupFilters>) =>
     set((state) => ({
-      filters: { ...state.filters, ...newFilters }
+      filters: { ...state.filters, ...newFilters },
     })),
 
   updateMapState: (newMapState: Partial<MapState>) =>
     set((state) => ({
-      map: { ...state.map, ...newMapState }
+      map: { ...state.map, ...newMapState },
     })),
 
   updateUIState: (newUIState: Partial<UIState>) =>
     set((state) => ({
-      ui: { ...state.ui, ...newUIState }
+      ui: { ...state.ui, ...newUIState },
     })),
 
-  clearFilters: () => set({ filters: defaultFilters })
+  clearFilters: () => set({ filters: defaultFilters }),
 }));

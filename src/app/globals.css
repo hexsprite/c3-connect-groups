@@ -2,15 +2,40 @@
 
 /* C3 Brand CSS Variables and Global Styles */
 :root {
-  --c3-primary-blue: #006acc;
-  --c3-selection-blue: #0073e6;
-  --c3-button-hover: #0084ff;
-  --c3-text-primary: #292929;
-  --c3-text-secondary: #404040;
-  --c3-border: #e5e5e5;
-  --c3-background: #ffffff;
-  --c3-warning-orange: #ffbc86;
-  
+  /* Primary Colors */
+  --c3-blue: #0061ff;
+  --c3-yellow: #faff08;
+  --c3-kids: #e65400;
+
+  /* Greys */
+  --c3-grey-0: #f0f4fb;
+  --c3-grey-1: #dbe2ec;
+  --c3-grey-2: #aebacf;
+  --c3-grey-3: #667b9d;
+  --c3-grey-4: #3f506c;
+  --c3-grey-5: #1f2a3d;
+
+  /* Base Colors */
+  --c3-black: #1b2027;
+  --c3-white: white;
+
+  /* Status Colors */
+  --c3-error: #ec361d;
+  --c3-error-light: #fcefed;
+  --c3-warning: #ffba08;
+  --c3-warning-light: #faf6eb;
+  --c3-success: #4cc04b;
+  --c3-success-light: #e7fae7;
+
+  /* Semantic Color Mappings */
+  --c3-primary-blue: var(--c3-blue);
+  --c3-selection-blue: var(--c3-blue);
+  --c3-button-hover: #0052d6;
+  --c3-text-primary: var(--c3-black);
+  --c3-text-secondary: var(--c3-grey-4);
+  --c3-border: var(--c3-grey-1);
+  --c3-background: var(--c3-white);
+
   /* Spacing variables */
   --c3-xs: 8px;
   --c3-s: 12px;
@@ -21,18 +46,17 @@
   --c3-xxxl: 48px;
 }
 
-/* Global body styles matching C3 Webflow implementation */
+/* Global body styles */
 body {
-  font-family: Inter, -apple-system, "system-ui", "Segoe UI", Roboto, 
-               Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", 
-               Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--c3-text-primary);
   background-color: var(--c3-background);
+  line-height: 1.6;
 }
 
-/* Selection color consistent with Webflow */
+/* Selection color */
 ::selection {
   background-color: var(--c3-selection-blue);
   color: white;
@@ -48,38 +72,117 @@ body {
   .c3-button-primary {
     background-color: var(--c3-primary-blue);
     color: white;
-    padding: var(--c3-s) var(--c3-l);
-    border-radius: 3px;
-    font-weight: 500;
-    transition: background-color 0.2s;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
-  
+
   .c3-button-primary:hover {
     background-color: var(--c3-button-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 97, 255, 0.3);
   }
-  
+
+  .c3-button-primary:disabled {
+    background-color: var(--c3-grey-2);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
   .c3-input {
     border: 1px solid var(--c3-border);
-    border-radius: 3px;
-    padding: var(--c3-s);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
   }
-  
+
   .c3-input:focus {
     border-color: var(--c3-selection-blue);
     outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 97, 255, 0.1);
   }
-  
+
   .c3-card {
     background-color: white;
     border: 1px solid var(--c3-border);
-    border-radius: 3px;
-    padding: var(--c3-l);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
   }
-  
+
   .c3-card:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .c3-heading {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .c3-heading-xl {
+    font-size: 48px;
+    line-height: 1.1;
+  }
+
+  .c3-heading-lg {
+    font-size: 36px;
+    line-height: 1.2;
+  }
+
+  .c3-heading-md {
+    font-size: 24px;
+    line-height: 1.3;
+  }
+
+  .c3-heading-sm {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  .c3-text-body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .c3-text-sm {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .c3-text-xs {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* Status-specific styles */
+  .c3-status-error {
+    background-color: var(--c3-error-light);
+    color: var(--c3-error);
+  }
+
+  .c3-status-warning {
+    background-color: var(--c3-warning-light);
+    color: var(--c3-warning);
+  }
+
+  .c3-status-success {
+    background-color: var(--c3-success-light);
+    color: var(--c3-success);
   }
 }
 
@@ -90,5 +193,14 @@ body {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-clamp: 3;
   }
 }

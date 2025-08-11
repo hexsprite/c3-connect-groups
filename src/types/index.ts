@@ -6,7 +6,7 @@ export interface Group {
   location: string;
   meetingDay: string;
   meetingTime: string;
-  groupType: 'Mixed' | 'Men' | 'Women';
+  groupType: "Mixed" | "Men" | "Women";
   capacity?: number;
   currentMemberCount?: number;
   isOpen: boolean;
@@ -14,7 +14,7 @@ export interface Group {
   planningCenterUrl: string;
   latitude?: number;
   longitude?: number;
-  campusLocation: 'Downtown' | 'Midtown' | 'Hamilton';
+  campusLocation: "Downtown" | "Midtown" | "Hamilton";
 }
 
 // Filter Types
@@ -24,6 +24,7 @@ export interface GroupFilters {
   day: string;
   time: string;
   type: string;
+  groupType: string;
 }
 
 // Map Types
@@ -39,7 +40,7 @@ export interface MapState {
 // UI State Types
 export interface UIState {
   loading: boolean;
-  view: 'split' | 'list' | 'map';
+  view: "split" | "list" | "map";
   selectedGroup: string | null;
   hoveredGroup: string | null;
 }
@@ -50,7 +51,7 @@ export interface AppState {
   filters: GroupFilters;
   map: MapState;
   ui: UIState;
-  
+
   // Actions
   setGroups: (groups: Group[]) => void;
   updateFilters: (filters: Partial<GroupFilters>) => void;
